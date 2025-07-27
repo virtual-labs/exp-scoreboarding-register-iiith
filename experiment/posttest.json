@@ -2,38 +2,157 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "This is a Sample Question 1?",
+      "question": "Why is register renaming critical for modern superscalar pipelines?",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "It increases the clock frequency",
+        "b": "It simplifies compiler design",
+        "c": "It removes name-based hazards and improves parallelism",
+        "d": "It avoids instruction cache misses"
       },
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
-      },
-      "correctAnswer": "a",
-      "difficulty": "beginner"
-    },
-    {
-      "question": "This is a Sample Question 2?",
-      "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
-      },
-      "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "a": "Clock speed is hardware-dependent.",
+        "b": "Not directly related.",
+        "c": "Correct. Renaming avoids WAR/WAW and improves ILP.",
+        "d": "Unrelated to renaming."
       },
       "correctAnswer": "c",
       "difficulty": "beginner"
+    },
+    {
+      "question": "What type of hazards does register renaming specifically target?",
+      "answers": {
+        "a": "RAW and structural",
+        "b": "Control and structural",
+        "c": "WAR and WAW",
+        "d": "Cache and branch hazards"
+      },
+      "explanations": {
+        "a": "RAW is a true dependency.",
+        "b": "Unrelated types.",
+        "c": "Correct. These are false dependencies.",
+        "d": "Handled by other mechanisms."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the simulation, what does it mean if an architectural register maps to multiple physical registers across instructions?",
+      "answers": {
+        "a": "The simulator has a bug",
+        "b": "This allows multiple writes to the same register without conflict",
+        "c": "This causes WAR hazards",
+        "d": "It prevents out-of-order execution"
+      },
+      "explanations": {
+        "a": "This is expected behavior.",
+        "b": "Correct. This is how renaming works.",
+        "c": "Renaming removes WAR.",
+        "d": "It enables out-of-order."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What happens if there are no free physical registers during instruction issue?",
+      "answers": {
+        "a": "The instruction is issued anyway",
+        "b": "A WAW hazard occurs",
+        "c": "The pipeline stalls until a physical register is freed",
+        "d": "The logical register is reused"
+      },
+      "explanations": {
+        "a": "Unsafe issue.",
+        "b": "Renaming avoids WAW.",
+        "c": "Correct. Stall occurs when out of physical registers.",
+        "d": "Would reintroduce hazards."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "After an instruction writes its result, when can its physical register be reclaimed?",
+      "answers": {
+        "a": "Immediately after execution",
+        "b": "After commit and once no other instructions depend on it",
+        "c": "After rename stage",
+        "d": "Never — physical registers are fixed"
+      },
+      "explanations": {
+        "a": "Too early.",
+        "b": "Correct. Safe to reclaim after commit.",
+        "c": "Still in use.",
+        "d": "Incorrect — physical registers are reused."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "What allows two instructions writing to the same architectural register to proceed out of order?",
+      "answers": {
+        "a": "Delayed write-back",
+        "b": "Issuing instructions in-order",
+        "c": "Assigning a new physical register to the later instruction",
+        "d": "Skipping dependencies"
+      },
+      "explanations": {
+        "a": "Not sufficient.",
+        "b": "This limits ILP.",
+        "c": "Correct. This is how renaming removes WAW.",
+        "d": "Hazardous."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In a register rename table, what does a mapping like 'R5 → P8' indicate?",
+      "answers": {
+        "a": "Register R5 is invalid",
+        "b": "P8 is the architectural register",
+        "c": "Physical register P8 holds the most recent value for R5",
+        "d": "R5 has been renamed to R8"
+      },
+      "explanations": {
+        "a": "R5 is valid and mapped.",
+        "b": "P8 is physical, not architectural.",
+        "c": "Correct. That’s the latest value.",
+        "d": "Incorrect interpretation."
+      },
+      "correctAnswer": "c",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "A student tries to write back a result, but the simulator blocks it. The rename table shows another instruction maps to the same architectural register. Why is this blocked?",
+      "answers": {
+        "a": "A WAW hazard is pending and write-back is unsafe",
+        "b": "RAW hazard must be resolved first",
+        "c": "There are no more rename slots",
+        "d": "The functional unit is busy"
+      },
+      "explanations": {
+        "a": "Correct. Only the most recent mapping can be written.",
+        "b": "Not relevant at this stage.",
+        "c": "Rename slot shortage affects issue.",
+        "d": "Write-back doesn't wait for units."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "What would be the main limitation if register renaming is not used along with scoreboarding?",
+      "answers": {
+        "a": "Only floating-point instructions can be executed",
+        "b": "Only one instruction can be in the pipeline at a time",
+        "c": "WAR and WAW hazards must be stalled instead of eliminated",
+        "d": "The rename table becomes too large"
+      },
+      "explanations": {
+        "a": "False — not instruction-type specific.",
+        "b": "Scoreboarding allows multiple instructions.",
+        "c": "Correct. Renaming eliminates these hazards.",
+        "d": "Rename table doesn’t exist without renaming."
+      },
+      "correctAnswer": "c",
+      "difficulty": "advanced"
     }
   ]
 }
