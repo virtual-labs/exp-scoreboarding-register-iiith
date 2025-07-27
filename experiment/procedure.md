@@ -1,4 +1,4 @@
-### Procedure### Experiment Procedure
+### Experiment Procedure ###
 
 1. **Select Instruction Sequence**  
    Begin by selecting or entering a sequence of instructions using the provided input panel. Each instruction should use architectural registers for source and destination operands.

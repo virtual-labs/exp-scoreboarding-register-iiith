@@ -1,4 +1,4 @@
-### Link your theory in here### Theory
+### Theory ###
 
 In pipelined processors, instruction-level parallelism (ILP) is often limited by data hazards such as Read After Write (RAW), Write After Read (WAR), and Write After Write (WAW). While scoreboarding is effective in dynamically managing instruction issue and execution by tracking resource and data dependencies, it does not eliminate all types of hazards—particularly the false dependencies (WAR and WAW) that arise due to register reuse.
 
