@@ -1,10 +1,9 @@
-### Experiment Procedure ###
-
 1. **Select Instruction Sequence**  
    Begin by selecting or entering a sequence of instructions using the provided input panel. Each instruction should use architectural registers for source and destination operands.
 
 2. **Start the Simulation**  
    Once the instruction sequence is finalized, start the simulation. The interface will display the following key components:
+
    - **Instruction Status Table**: Tracks the progress of each instruction through the pipeline stages.
    - **Functional Unit Status Table**: Shows the availability, occupancy, and operand readiness of each functional unit.
    - **Register Status Table**: Indicates which physical unit is writing to each architectural register.
@@ -12,6 +11,7 @@
 
 3. **Advance Instructions Manually**  
    The student manually advances instructions through the following stages by clicking the appropriate cells in the **Instruction Status Table**:
+
    - **Issue**
    - **Read Operands**
    - **Execution Complete**
