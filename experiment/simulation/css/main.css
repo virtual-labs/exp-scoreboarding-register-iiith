@@ -165,3 +165,9 @@ th {
 .btn-warning:hover {
     background-color: #d97706;
 }
+
+/* Disabled button styling */
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
