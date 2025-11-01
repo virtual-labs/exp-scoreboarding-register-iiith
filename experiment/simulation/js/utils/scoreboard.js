@@ -640,8 +640,48 @@ class RenamingScoreboard {
     // Helper method to get functional unit for instruction
     getFunctionalUnitForInstruction(instructionIndex) {
         const instruction = this.instructions[instructionIndex];
-        return this.functionalUnits.find(unit => 
+        return this.functionalUnits.find(unit =>
             unit.busy && unit.op === instruction.type && unit.fi === instruction.physDest
         );
+    }
+
+    // Update execution latency for an instruction type (only in edit mode)
+    updateLatency(instructionType, newLatency) {
+        if (this.simulationStarted) {
+            return {
+                success: false,
+                message: "Cannot update latency during simulation. Stop the simulation to edit latencies.",
+                oldLatency: this.executionCycles[instructionType]
+            };
+        }
+
+        // Validate the instruction type
+        if (!(instructionType in this.executionCycles)) {
+            return {
+                success: false,
+                message: `Invalid instruction type: ${instructionType}`,
+                oldLatency: null
+            };
+        }
+
+        // Validate the new latency value
+        if (typeof newLatency !== 'number' || newLatency < 1 || newLatency > 100) {
+            return {
+                success: false,
+                message: "Latency must be a number between 1 and 100.",
+                oldLatency: this.executionCycles[instructionType]
+            };
+        }
+
+        const oldLatency = this.executionCycles[instructionType];
+
+        // Update the execution cycles configuration
+        this.executionCycles[instructionType] = newLatency;
+
+        return {
+            success: true,
+            message: `Updated ${instructionType} latency from ${oldLatency} to ${newLatency} cycles.`,
+            oldLatency: oldLatency
+        };
     }
 }

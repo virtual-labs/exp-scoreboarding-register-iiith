@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const simulationModePanel = document.getElementById('simulation-mode-panel');
     
     // Initialize components
-    let instructionBuilder, instructionList, instructionStatus, functionalUnitStatus, renameTable, physicalRegisterStatus;
+    let instructionBuilder, instructionList, instructionStatus, functionalUnitStatus, renameTable, physicalRegisterStatus, latencyConfigEdit, latencyConfigSimulation;
     
     function initializeComponents() {
         instructionBuilder = new InstructionBuilder(
@@ -59,8 +59,34 @@ document.addEventListener('DOMContentLoaded', () => {
             'physical-register-status',
             scoreboard
         );
+
+        // Latency config for edit mode (editable)
+        latencyConfigEdit = new LatencyConfig(
+            'latency-config-edit',
+            scoreboard,
+            onLatencyChange
+        );
+
+        // Latency config for simulation mode (read-only)
+        latencyConfigSimulation = new LatencyConfig(
+            'latency-config-simulation',
+            scoreboard,
+            onLatencyChange
+        );
     }
-    
+
+    // Update start button state based on whether instructions exist
+    function updateStartButtonState() {
+        const startBtn = document.getElementById('start-btn');
+        if (scoreboard.instructions.length > 0) {
+            startBtn.disabled = false;
+            startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            startBtn.disabled = true;
+            startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    }
+
     // Update the UI
     function updateUI() {
         // Update mode indicator
@@ -84,8 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
             functionalUnitStatus.render();
             renameTable.render();
             physicalRegisterStatus.render();
+            latencyConfigSimulation.render(true); // Read-only in simulation mode
         } else {
             instructionList.render();
+            latencyConfigEdit.render(false); // Editable in edit mode
         }
         
         // Update next cycle button state
@@ -192,6 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle new instruction added
     function onInstructionAdded(instructionIndex) {
+        updateStartButtonState();
         instructionList.render();
         showFeedback(`Added new instruction: ${scoreboard.instructions[instructionIndex].type}`, 'success');
     }
@@ -199,6 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle instruction removed
     function onInstructionRemoved(index) {
         scoreboard.removeInstruction(index);
+        updateStartButtonState();
         instructionList.render();
         showFeedback("Instruction removed.", 'success');
     }
@@ -206,10 +236,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle instructions reordered
     function onInstructionsReordered(fromIndex, toIndex) {
         scoreboard.reorderInstructions(fromIndex, toIndex);
+        updateStartButtonState();
         instructionList.render();
         showFeedback("Instructions reordered.", 'success');
     }
-    
+
+    // Handle latency change
+    function onLatencyChange(result) {
+        if (result.success) {
+            showFeedback(result.message, 'success');
+            // Update the latency config display
+            latencyConfigEdit.updateDisplay();
+        } else {
+            showFeedback(result.message, 'error');
+        }
+    }
+
     // Event listeners
     startButton.addEventListener('click', () => {
         if (scoreboard.instructions.length === 0) {
@@ -257,6 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize and render
     initializeComponents();
+    updateStartButtonState();
     updateUI();
     showFeedback("Welcome to the Register Renaming Pipeline Simulator. Add instructions and then click 'Start Simulation' to begin exploring how register renaming eliminates WAR and WAW hazards!", 'info');
 });

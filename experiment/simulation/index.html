@@ -9,12 +9,6 @@
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-4">
-        <header class="mb-6">
-            <h1 class="text-3xl font-bold text-center">Register Renaming Pipeline Simulator</h1>
-            <p class="text-center text-gray-600">Interactive simulator for understanding dynamic scheduling with register renaming</p>
-            <p class="text-center text-sm text-blue-600 mt-2">Experience how register renaming eliminates WAR and WAW hazards!</p>
-        </header>
-        
         <!-- Mode indicator -->
         <div class="bg-blue-100 p-4 rounded-lg mb-6">
             <div class="flex justify-between items-center">
@@ -23,7 +17,7 @@
                     <span id="mode-indicator" class="ml-2">Edit Mode</span>
                 </div>
                 <div>
-                    <button id="start-btn" class="btn btn-primary">Start Simulation</button>
+                    <button id="start-btn" class="btn btn-primary" disabled>Start Simulation</button>
                     <button id="restart-btn" class="btn btn-warning hidden">Restart Simulation</button>
                     <button id="stop-btn" class="btn btn-secondary hidden">Stop Simulation</button>
                     <button id="reset-btn" class="btn btn-danger">Reset</button>
@@ -33,19 +27,89 @@
 
         <!-- Edit Mode Panel -->
         <div id="edit-mode-panel">
+            <!-- Quick Start Guide Card -->
+            <div class="card mb-6 bg-blue-50 border-blue-200">
+                <h2 class="card-title text-blue-900">🚀 Quick Start Guide</h2>
+                <div class="card-body">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <h3 class="font-semibold text-blue-900 mb-2">📝 1. Build Sequence</h3>
+                            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                <li>Add instructions (LD, SD, DADD, ADDD, etc.)</li>
+                                <li>Integer ops use R0-R15, FP ops use F0-F15</li>
+                                <li>Drag to reorder, click ✕ to delete</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-semibold text-blue-900 mb-2">⚙️ 2. Set Latencies</h3>
+                            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                <li>Configure execution cycles (1-100)</li>
+                                <li>Typical: INT=1, FP_ADD=2, FP_MULT=10</li>
+                                <li>Cannot change after starting</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-semibold text-blue-900 mb-2">▶️ 3. Run Simulation</h3>
+                            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                <li>Click "Start Simulation"</li>
+                                <li>Click cells to advance stages</li>
+                                <li>Complete yellow (pending) actions first</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-semibold text-blue-900 mb-2">💡 4. Learn & Explore</h3>
+                            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                <li>Use "Hint" button for guidance</li>
+                                <li>Watch register renaming eliminate hazards</li>
+                                <li>See detailed procedure in "Procedure" tab</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-white rounded border border-blue-300">
+                        <p class="text-sm text-gray-800">
+                            <strong>🎯 Pipeline Stages:</strong>
+                            <span class="text-blue-700">Issue</span> →
+                            <span class="text-blue-700">Read Operands</span> →
+                            <span class="text-blue-700">Execution Complete</span> →
+                            <span class="text-blue-700">Write Result</span>
+                        </p>
+                        <p class="text-xs text-gray-600 mt-1">
+                            <strong>Color Guide:</strong>
+                            <span class="text-green-600">Green = Done</span> |
+                            <span class="text-yellow-600">Yellow = Ready</span> |
+                            <span class="text-gray-500">Gray = Waiting</span> |
+                            <span class="text-red-600">Red = Blocked</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instruction Sequence Card -->
             <div class="card mb-6">
-                <h2 class="card-title">Instructions</h2>
+                <h2 class="card-title">Instruction Sequence</h2>
                 <div class="card-body">
                     <div id="instruction-list" class="mb-4">
                         <!-- Instruction list will be rendered here -->
                     </div>
-                    
+
                     <div class="border-t pt-4">
                         <h3 class="text-lg font-semibold mb-2">Add New Instruction</h3>
                         <div id="instruction-builder">
                             <!-- Instruction builder will be rendered here -->
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Latency Configuration (Edit Mode) -->
+            <div class="card mb-6">
+                <h2 class="card-title">⚙️ Execution Latency Configuration</h2>
+                <div id="latency-config-edit" class="card-body">
+                    <!-- Latency configuration will be rendered here -->
                 </div>
             </div>
         </div>
@@ -132,6 +196,14 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Latency Configuration (Simulation Mode - Read Only) -->
+            <div class="card mb-6">
+                <h2 class="card-title">⚙️ Execution Latency Configuration</h2>
+                <div id="latency-config-simulation" class="card-body">
+                    <!-- Latency configuration will be rendered here (read-only) -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -146,6 +218,7 @@
     <script src="js/components/FunctionalUnitStatus.js"></script>
     <script src="js/components/RenameTable.js"></script>
     <script src="js/components/PhysicalRegisterStatus.js"></script>
+    <script src="js/components/LatencyConfig.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
