@@ -35,94 +35,157 @@ class InstructionBuilder {
 
     updateFormFields(type) {
         const dynamicFieldsContainer = document.getElementById('dynamic-fields');
-        
+
         // Clear previous fields
         dynamicFieldsContainer.innerHTML = '';
-        
+
+        // Determine if this is an integer or FP instruction
+        const isIntegerInstruction = [
+            INSTRUCTION_TYPES.INTEGER_ALU,
+            INSTRUCTION_TYPES.INTEGER_SUB,
+            INSTRUCTION_TYPES.AND,
+            INSTRUCTION_TYPES.OR,
+            INSTRUCTION_TYPES.XOR
+        ].includes(type);
+
+        const isFPInstruction = [
+            INSTRUCTION_TYPES.FP_ADD,
+            INSTRUCTION_TYPES.FP_SUB,
+            INSTRUCTION_TYPES.FP_MULT,
+            INSTRUCTION_TYPES.FP_DIV
+        ].includes(type);
+
         if (type === INSTRUCTION_TYPES.LOAD) {
-            // For load instructions: dest register, base register, offset
+            // For load instructions: dest register (both F and R), base register, offset
             dynamicFieldsContainer.innerHTML = `
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Destination Register</label>
                     <select id="dest-register" class="w-full p-2 border rounded">
                         <option value="">Select register</option>
-                        ${FP_REGISTERS.map(reg => 
-                            `<option value="${reg}">${reg}</option>`
-                        ).join('')}
+                        <optgroup label="Floating-Point Registers">
+                            ${FP_REGISTERS.map(reg =>
+                                `<option value="${reg}">${reg}</option>`
+                            ).join('')}
+                        </optgroup>
+                        <optgroup label="Integer Registers">
+                            ${INT_REGISTERS.map(reg =>
+                                `<option value="${reg}">${reg}</option>`
+                            ).join('')}
+                        </optgroup>
                     </select>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Base Address Register</label>
                     <select id="base-register" class="w-full p-2 border rounded">
                         <option value="">Select register</option>
-                        ${INT_REGISTERS.map(reg => 
+                        ${INT_REGISTERS.map(reg =>
                             `<option value="${reg}">${reg}</option>`
                         ).join('')}
                     </select>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Offset</label>
                     <input type="number" id="offset" class="w-full p-2 border rounded" placeholder="e.g., 34">
                 </div>
             `;
         } else if (type === INSTRUCTION_TYPES.STORE) {
-            // For store instructions: src register (value to store), base register, offset
+            // For store instructions: src register (value to store - both F and R), base register, offset
             dynamicFieldsContainer.innerHTML = `
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Value Register (to store)</label>
                     <select id="value-register" class="w-full p-2 border rounded">
                         <option value="">Select register</option>
-                        ${FP_REGISTERS.map(reg => 
-                            `<option value="${reg}">${reg}</option>`
-                        ).join('')}
+                        <optgroup label="Floating-Point Registers">
+                            ${FP_REGISTERS.map(reg =>
+                                `<option value="${reg}">${reg}</option>`
+                            ).join('')}
+                        </optgroup>
+                        <optgroup label="Integer Registers">
+                            ${INT_REGISTERS.map(reg =>
+                                `<option value="${reg}">${reg}</option>`
+                            ).join('')}
+                        </optgroup>
                     </select>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Base Address Register</label>
                     <select id="base-register" class="w-full p-2 border rounded">
                         <option value="">Select register</option>
-                        ${INT_REGISTERS.map(reg => 
+                        ${INT_REGISTERS.map(reg =>
                             `<option value="${reg}">${reg}</option>`
                         ).join('')}
                     </select>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Offset</label>
                     <input type="number" id="offset" class="w-full p-2 border rounded" placeholder="e.g., 34">
                 </div>
             `;
-        } else {
-            // For ALU instructions: dest register, src1, src2
+        } else if (isIntegerInstruction) {
+            // For integer ALU instructions: only integer registers (R0-R31)
             dynamicFieldsContainer.innerHTML = `
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Destination Register</label>
                     <select id="dest-register" class="w-full p-2 border rounded">
                         <option value="">Select register</option>
-                        ${FP_REGISTERS.map(reg => 
+                        ${INT_REGISTERS.map(reg =>
                             `<option value="${reg}">${reg}</option>`
                         ).join('')}
                     </select>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Source Register 1</label>
                     <select id="src1-register" class="w-full p-2 border rounded">
                         <option value="">Select register</option>
-                        ${[...FP_REGISTERS, ...INT_REGISTERS].map(reg => 
+                        ${INT_REGISTERS.map(reg =>
                             `<option value="${reg}">${reg}</option>`
                         ).join('')}
                     </select>
                 </div>
-                
+
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Source Register 2</label>
                     <select id="src2-register" class="w-full p-2 border rounded">
                         <option value="">Select register</option>
-                        ${[...FP_REGISTERS, ...INT_REGISTERS].map(reg => 
+                        ${INT_REGISTERS.map(reg =>
+                            `<option value="${reg}">${reg}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+            `;
+        } else if (isFPInstruction) {
+            // For FP ALU instructions: only FP registers (F0-F31)
+            dynamicFieldsContainer.innerHTML = `
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Destination Register</label>
+                    <select id="dest-register" class="w-full p-2 border rounded">
+                        <option value="">Select register</option>
+                        ${FP_REGISTERS.map(reg =>
+                            `<option value="${reg}">${reg}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Source Register 1</label>
+                    <select id="src1-register" class="w-full p-2 border rounded">
+                        <option value="">Select register</option>
+                        ${FP_REGISTERS.map(reg =>
+                            `<option value="${reg}">${reg}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Source Register 2</label>
+                    <select id="src2-register" class="w-full p-2 border rounded">
+                        <option value="">Select register</option>
+                        ${FP_REGISTERS.map(reg =>
                             `<option value="${reg}">${reg}</option>`
                         ).join('')}
                     </select>
