@@ -25,7 +25,8 @@
       "source": "pretest.json",
       "label": "Pretest",
       "unit-type": "task",
-      "content-type": "assesment"
+      "content-type": "assesment",
+      "css_modules": ["quiz-numbering.css"]
     },
     {
       "target": "procedure.html",
@@ -46,7 +47,8 @@
       "source": "posttest.json",
       "label": "Posttest",
       "unit-type": "task",
-      "content-type": "assesment"
+      "content-type": "assesment",
+      "css_modules": ["quiz-numbering.css"]
     },
     {
       "target": "references.html",
