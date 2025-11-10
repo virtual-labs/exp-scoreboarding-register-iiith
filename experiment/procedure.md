@@ -1,16 +1,18 @@
-## Step 1: Build Your Instruction Sequence
+### Step 1: Build Your Instruction Sequence
 
 Begin by constructing a sequence of instructions that will demonstrate register renaming and scoreboarding concepts. The simulator supports the following instruction types:
 
-### Available Instructions
+#### Available Instructions
 
 - **Memory Operations**:
+
   - `LD` (Load): Loads data from memory into a register
   - `SD` (Store): Stores data from a register to memory
   - Base address register must be an integer register (R0-R15)
   - Destination/source can be either integer (R0-R15) or floating-point (F0-F15) registers
 
 - **Integer ALU Operations** (use only R0-R15):
+
   - `DADD`: Integer addition
   - `DSUB`: Integer subtraction
   - `AND`: Bitwise AND
@@ -23,7 +25,7 @@ Begin by constructing a sequence of instructions that will demonstrate register 
   - `MULTD`: Double-precision floating-point multiplication
   - `DIVD`: Double-precision floating-point division
 
-### Building Your Sequence
+#### Building Your Sequence
 
 1. Select an instruction type from the dropdown menu
 2. Choose appropriate registers based on the instruction type:
@@ -37,7 +39,7 @@ Begin by constructing a sequence of instructions that will demonstrate register 
 
 **Tip**: Try creating sequences with potential WAR and WAW hazards to see how register renaming eliminates them!
 
-## Step 2: Configure Execution Latencies
+### Step 2: Configure Execution Latencies
 
 Before starting the simulation, configure the execution latencies (number of cycles) for each instruction type. This allows you to experiment with different processor configurations:
 
@@ -52,23 +54,25 @@ Valid range: 1-100 cycles per instruction type.
 
 **Note**: Latencies cannot be modified once the simulation has started. You must stop and reset to change them.
 
-## Step 3: Start the Simulation
+### Step 3: Start the Simulation
 
 Once your instruction sequence is ready and latencies are configured, click the **"Start Simulation"** button. The interface will transition to simulation mode and display the following components:
 
-### Simulation Interface Components
+#### Simulation Interface Components
 
 1. **Instruction Status Table**
    Tracks the progress of each instruction through the four pipeline stages. Each cell shows the cycle number when that stage completed, or is clickable if the stage is ready to execute.
 
 2. **Functional Unit Status Table**
    Displays the state of all functional units:
+
    - **INTEGER1, INTEGER2**: Handle integer ALU operations and memory operations
    - **FP_ADDER**: Handles ADDD and SUBD operations
    - **FP_MULTIPLIER**: Handles MULTD operations
    - **FP_DIVIDER**: Handles DIVD operations
 
    For each unit, you can see:
+
    - **Busy**: Whether the unit is currently occupied
    - **Op**: The operation being performed
    - **Fi**: Destination physical register
@@ -82,11 +86,13 @@ Once your instruction sequence is ready and latencies are configured, click the 
 
 4. **Physical Register File**
    Displays the status of all 64 physical registers (P0-P63):
+
    - **P0-P15**: Initially mapped to R0-R15
    - **P16-P31**: Initially mapped to F0-F15
    - **P32-P63**: Initially free, allocated as needed
 
    Each register shows:
+
    - **Status**: Free, Busy (being written), or Ready (contains valid data)
    - **Architectural Register**: Which architectural register it's currently mapped to
    - **Instruction**: Which instruction is writing to it (if busy)
@@ -95,13 +101,14 @@ Once your instruction sequence is ready and latencies are configured, click the 
 5. **Execution Latency Configuration** (Read-Only)
    Displays the configured latencies for reference during simulation.
 
-## Step 4: Advance Instructions Through Pipeline Stages
+### Step 4: Advance Instructions Through Pipeline Stages
 
 The core of the learning experience involves manually advancing instructions through the pipeline stages by clicking on cells in the **Instruction Status Table**. Instructions must progress through these stages in order:
 
-### Stage 1: Issue
+#### Stage 1: Issue
 
 **What happens**:
+
 - Checks for an available functional unit (structural hazard check)
 - Performs register renaming:
   - Allocates a new physical register for the destination
@@ -111,42 +118,48 @@ The core of the learning experience involves manually advancing instructions thr
 - Sets up operand tracking (Qj, Qk, Rj, Rk flags)
 
 **Constraints**:
+
 - Instructions must issue **in program order** (cannot issue instruction N+1 until instruction N has issued)
 - Requires an available functional unit of the appropriate type
 - Cannot issue if no free physical registers are available
 
 **Color coding**: Yellow = ready to issue, Gray = blocked by previous instruction, Red = no available functional unit
 
-### Stage 2: Read Operands
+#### Stage 2: Read Operands
 
 **What happens**:
+
 - Waits for source operands to become available in their physical registers
 - Checks the Rj and Rk flags in the functional unit status
 - Once both operands are ready, marks this stage as complete
 
 **Constraints**:
+
 - Cannot occur in the same cycle as Issue (must wait at least one cycle)
 - Both source operands must be ready (Rj = true AND Rk = true)
 
 **Color coding**: Yellow = ready to read, Gray = waiting for operands
 
-### Stage 3: Execution Complete
+#### Stage 3: Execution Complete
 
 **What happens**:
+
 - Marks the execution as finished after the configured number of cycles have elapsed
 - The functional unit's cycle counter decrements each cycle automatically
 - When the counter reaches 0, this stage becomes available
 
 **Constraints**:
+
 - Must wait for the full execution latency to elapse
 - Cannot complete execution in the same cycle as reading operands
 - The functional unit must have cyclesRemaining = 0
 
 **Color coding**: Yellow = execution finished (ready to mark complete), Gray = still executing
 
-### Stage 4: Write Result
+#### Stage 4: Write Result
 
 **What happens**:
+
 - Writes the result to the destination physical register
 - Updates the physical register status from "Busy" to "Ready"
 - Notifies all waiting functional units that this operand is now available (updates their Rj/Rk flags)
@@ -155,79 +168,86 @@ The core of the learning experience involves manually advancing instructions thr
 - Frees source physical registers if they have no more readers and are no longer mapped
 
 **Constraints**:
+
 - Execution must be complete
 - With register renaming, there are **no WAR hazards** (unlike traditional scoreboarding)
 
 **Color coding**: Yellow = ready to write, Gray = execution not complete
 
-### Pending Actions
+#### Pending Actions
 
 Actions that should be performed in the current cycle are highlighted in **yellow** in the Instruction Status Table. You must complete all pending actions before advancing to the next cycle using the **"Next Cycle"** button.
 
-## Step 5: Use Hints and Learn from Feedback
+### Step 5: Use Hints and Learn from Feedback
 
 The simulator provides several mechanisms to help you learn:
 
-### Hint System
+#### Hint System
 
 Click the **"Hint"** button at any time to receive suggestions about:
+
 - Which actions should be performed in the current cycle
 - Why certain actions are blocked
 - What conditions need to be met to proceed
 
-### Error Messages
+#### Error Messages
 
 If you attempt an invalid action, the simulator will:
+
 - Block the action from executing
 - Display a detailed error message explaining why it was blocked
 - Provide information about what needs to happen first
 
 Common error scenarios:
+
 - Trying to issue out of order
 - Attempting to read operands before they're ready
 - Trying to complete execution before enough cycles have elapsed
 - Structural hazards (no available functional unit)
 
-### Visual Feedback
+#### Visual Feedback
 
 - **Green cells**: Stage completed
 - **Yellow cells**: Action ready to perform (pending)
 - **Gray cells**: Not yet ready (waiting for dependencies)
 - **Red cells**: Blocked (e.g., structural hazard)
 
-## Step 6: Observe Register Renaming Benefits
+### Step 6: Observe Register Renaming Benefits
 
 As you advance through the simulation, pay special attention to the **Register Rename Table** and **Physical Register File**:
 
-### Eliminating WAW Hazards
+#### Eliminating WAW Hazards
 
 When two instructions write to the same architectural register (e.g., `DADD R1, R2, R3` followed by `DSUB R1, R4, R5`), observe how:
+
 - Each instruction gets a **different physical register** for R1
 - The rename table is updated to point to the newer physical register
 - The old physical register is freed once no instructions are reading from it
 - Both instructions can execute in parallel without conflicts
 
-### Eliminating WAR Hazards
+#### Eliminating WAR Hazards
 
 When an instruction reads a register that a later instruction writes (e.g., `DADD R3, R1, R2` followed by `DSUB R1, R4, R5`), observe how:
+
 - The first instruction reads from the **current physical register** mapped to R1
 - The second instruction writes to a **new physical register** for R1
 - The first instruction continues reading from the old physical register
 - No conflict occurs, enabling out-of-order execution
 
-### Physical Register Lifecycle
+#### Physical Register Lifecycle
 
 Watch how physical registers transition through states:
+
 1. **Free**: Available for allocation
 2. **Busy**: Allocated to an instruction, being written
 3. **Ready**: Contains valid data, can be read
 4. **Free again**: Released when no longer needed (no readers, not in rename table)
 
-## Step 7: Complete the Simulation
+### Step 7: Complete the Simulation
 
 Continue advancing instructions through all stages until every instruction has completed the **Write Result** stage.
 
-### Analysis Questions
+#### Analysis Questions
 
 After completing the simulation, analyze the results:
 
@@ -241,7 +261,7 @@ After completing the simulation, analyze the results:
 
 5. **Register Pressure**: How many physical registers were needed? What happens if you run out of free physical registers?
 
-### Experiment Variations
+#### Experiment Variations
 
 Try these variations to deepen your understanding:
 
