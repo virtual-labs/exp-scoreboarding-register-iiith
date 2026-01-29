@@ -2,38 +2,157 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "This is a Sample Question 1?",
+      "question": "What is the main purpose of register renaming in a pipelined processor?",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "To reduce instruction latency",
+        "b": "To eliminate false data dependencies",
+        "c": "To improve cache locality",
+        "d": "To avoid branch mispredictions"
       },
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "a": "Latency is determined by functional units.",
+        "b": "Correct. Register renaming removes WAR/WAW hazards.",
+        "c": "Unrelated to register renaming.",
+        "d": "Branch prediction handles control hazards."
       },
-      "correctAnswer": "a",
+      "correctAnswer": "b",
       "difficulty": "beginner"
     },
     {
-      "question": "This is a Sample Question 2?",
+      "question": "Which of the following is a false dependency that register renaming aims to eliminate?",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "Read After Write (RAW)",
+        "b": "Write After Read (WAR)",
+        "c": "Write After Write (WAW)",
+        "d": "Both WAR and WAW"
       },
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "a": "RAW is a true dependency.",
+        "b": "Correct but incomplete.",
+        "c": "Correct but incomplete.",
+        "d": "Correct. Register renaming removes both WAR and WAW hazards."
+      },
+      "correctAnswer": "d",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In scoreboarding without register renaming, which hazard cannot be resolved?",
+      "answers": {
+        "a": "RAW",
+        "b": "Structural",
+        "c": "WAR",
+        "d": "Instruction cache misses"
+      },
+      "explanations": {
+        "a": "Scoreboarding handles RAW.",
+        "b": "Scoreboarding handles structural hazards.",
+        "c": "Correct. WAR requires register renaming.",
+        "d": "Unrelated to register renaming."
       },
       "correctAnswer": "c",
       "difficulty": "beginner"
+    },
+    {
+      "question": "What component dynamically maps architectural registers to physical registers?",
+      "answers": {
+        "a": "Reorder buffer",
+        "b": "Scoreboard",
+        "c": "Rename table",
+        "d": "Reservation station"
+      },
+      "explanations": {
+        "a": "ROB tracks commit order.",
+        "b": "Scoreboard tracks functional unit status.",
+        "c": "Correct. Rename table holds the mapping.",
+        "d": "Reservation station is part of Tomasulo's algorithm."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In the context of register renaming, what does the term 'physical register' mean?",
+      "answers": {
+        "a": "A register directly accessed by the programmer",
+        "b": "A memory-mapped hardware register",
+        "c": "A hardware register that temporarily holds data for renamed instructions",
+        "d": "A virtual placeholder used during static scheduling"
+      },
+      "explanations": {
+        "a": "That’s an architectural register.",
+        "b": "Unrelated to renaming.",
+        "c": "Correct.",
+        "d": "Renaming is dynamic, not static."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "What enables out-of-order execution without violating program correctness when register renaming is used?",
+      "answers": {
+        "a": "Scoreboarding",
+        "b": "Dependency tagging",
+        "c": "Logical register reuse",
+        "d": "Separation of name and storage"
+      },
+      "explanations": {
+        "a": "Helpful, but not sufficient alone.",
+        "b": "Tagging is part of renaming, but not the whole idea.",
+        "c": "Reusing names causes hazards.",
+        "d": "Correct. Name/storage separation is the key idea."
+      },
+      "correctAnswer": "d",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Suppose two instructions write to the same architectural register. Without renaming, which hazard would occur?",
+      "answers": {
+        "a": "RAW",
+        "b": "WAR",
+        "c": "WAW",
+        "d": "Structural"
+      },
+      "explanations": {
+        "a": "RAW is read after write.",
+        "b": "WAR is write after read.",
+        "c": "Correct. Multiple writes to same reg = WAW.",
+        "d": "Not related to resource conflict here."
+      },
+      "correctAnswer": "c",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "How does register renaming eliminate WAR hazards?",
+      "answers": {
+        "a": "By delaying the write of the later instruction",
+        "b": "By executing instructions in strict program order",
+        "c": "By allocating a new physical register to the writer",
+        "d": "By aborting dependent reads"
+      },
+      "explanations": {
+        "a": "This adds stalls.",
+        "b": "This limits ILP.",
+        "c": "Correct. Renaming isolates the destination.",
+        "d": "Reads are not aborted."
+      },
+      "correctAnswer": "c",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "If physical registers are insufficient during register renaming, the processor must:",
+      "answers": {
+        "a": "Stall the issue stage",
+        "b": "Use the same register name again",
+        "c": "Flush the pipeline",
+        "d": "Ignore renaming and execute in order"
+      },
+      "explanations": {
+        "a": "Correct. No free physical register leads to stall.",
+        "b": "This causes hazards.",
+        "c": "Too drastic and unnecessary.",
+        "d": "Incompatible with renaming approach."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
     }
   ]
 }
