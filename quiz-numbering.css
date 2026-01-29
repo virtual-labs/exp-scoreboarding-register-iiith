@@ -1,0 +1,17 @@
+/* CSS for automatic question numbering in pretest/posttest */
+
+#quiz {
+    counter-reset: question-counter;
+}
+
+.question {
+    counter-increment: question-counter;
+    position: relative;
+}
+
+.question::before {
+    content: counter(question-counter) ". ";
+    font-weight: 900;
+    margin-right: 0.5em;
+}
+
