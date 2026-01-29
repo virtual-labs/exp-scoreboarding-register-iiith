@@ -120,8 +120,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const cycleValidation = validator.canAdvanceCycle();
         nextCycleButton.disabled = !cycleValidation.valid;
         nextCycleButton.classList.toggle('opacity-50', !cycleValidation.valid);
+
+        // Check if simulation is complete and show completion message
+        if (scoreboard.simulationStarted && scoreboard.isSimulationComplete()) {
+            showFeedback(
+                "🎉 Simulation complete! All instructions have finished execution. Click 'Stop' to edit instructions or 'Reset' to start a new simulation.",
+                'success'
+            );
+        }
     }
-    
+
     // Show feedback
     function showFeedback(message, type = 'info') {
         feedbackArea.innerHTML = `
