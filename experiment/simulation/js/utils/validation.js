@@ -288,14 +288,23 @@ class RenamingScoreboardValidator {
                 message: "Simulation must be started to advance cycles."
             };
         }
-        
+
+        // Check if simulation is complete
+        if (this.scoreboard.isSimulationComplete()) {
+            return {
+                valid: false,
+                complete: true,
+                message: "Simulation complete! All instructions have finished execution."
+            };
+        }
+
         if (this.scoreboard.pendingActions.size > 0) {
             return {
                 valid: false,
                 message: `There are ${this.scoreboard.pendingActions.size} pending actions that must be completed before advancing to the next cycle.`
             };
         }
-        
+
         return { valid: true };
     }
 }

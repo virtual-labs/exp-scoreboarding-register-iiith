@@ -472,8 +472,27 @@ class RenamingScoreboard {
         return true;
     }
 
+    // Check if all instructions have completed all stages
+    isSimulationComplete() {
+        if (this.instructions.length === 0) {
+            return false;
+        }
+        return this.instructions.every(instr =>
+            instr.status[INSTRUCTION_STAGES.WRITE_RESULT] !== null
+        );
+    }
+
     // Advance to the next cycle
     advanceCycle() {
+        // Check if simulation is already complete
+        if (this.isSimulationComplete()) {
+            return {
+                success: false,
+                complete: true,
+                message: "Simulation complete! All instructions have finished execution. Click 'Stop' to edit instructions or 'Reset' to start a new simulation."
+            };
+        }
+
         // Check if there are any pending actions for the current cycle
         if (this.pendingActions.size > 0) {
             return {
@@ -481,7 +500,7 @@ class RenamingScoreboard {
                 message: "Cannot advance to next cycle. There are pending actions that must be completed first."
             };
         }
-        
+
         this.currentCycle++;
         
         // Decrement remaining execution cycles for all active functional units
